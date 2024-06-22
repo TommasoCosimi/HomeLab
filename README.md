@@ -1,2 +1,2 @@
 # HomeLab
-HomeLab Configs
+Configurations of the various Services.

@@ -1,13 +1,15 @@
 # ZeroTier
 
-Since my home network is behind a [Carrier-Grade NAT](https://en.wikipedia.org/wiki/Carrier-grade_NAT), it is simpler (and cheaper) to use a Software Defined WAN like [ZeroTier](https://www.zerotier.com/product/).
+Since my home network is behind a [Carrier-Grade NAT](https://en.wikipedia.org/wiki/Carrier-grade_NAT), it is simpler (and cheaper) for me to use a Software Defined WAN like [ZeroTier](https://www.zerotier.com/product/) to access it from outside.
 
-Since I want to keep the services on my Proxmox instance just on the Home Network, I needed a Server which would route traffic from the ZeroTier Virtual LAN to my physical LAN.
+Since I want to keep the services on my Proxmox instance just inside my Home Network, I needed a Server which would route traffic from the ZeroTier Virtual LAN to my physical LAN.
 
 The Server functionality will be unwound by an LXC Container.
 
+
 ## ZeroTier Network
 Just a new Network created [here](https://my.zerotier.com/network) with default settings.
+
 
 ## The Container
 
@@ -17,6 +19,7 @@ As anticipated it is an LXC Container with the following hardware allocated:
 * 2GB of Disk Space on a mechanical Hard Drive.
 
 The container runs on Debian 12 "Bookworm" (template downloaded from the Proxmox default list).
+
 
 ## First boot and setup
 
@@ -69,18 +72,20 @@ lxc.mount.entry = /dev/net dev/net none bind,create=dir
 
 Which will mount the `/dev/net` folder in the Container. Credits for this workaround go to [Bill McGonigle](https://forum.proxmox.com/members/bill-mcgonigle.61031/) in [this](https://forum.proxmox.com/threads/openvpn-in-unprivileged-container.38670/) Thread.
 
+
 ## Installing the ZeroTier Client on the Server
-Following the Instructions found [here](https://www.zerotier.com/download/), installing the client on the Debian Container was as easy as running the following command:
+Following the Instructions found [here](https://www.zerotier.com/download/), installing the client on the Debian Container was as easy as running the following script:
 ```bash
 curl -s 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/main/doc/contact%40zerotier.com.gpg' | gpg --import && if z=$(curl -s 'https://install.zerotier.com/' | gpg); then echo "$z" | sudo bash; fi
 ```
 
-There is a chance that you may not have installed the `curl` and `gpg` packages, therefore the installer will throw an error. Here is the command to fix that:
+There is a chance that you may not have installed the `curl` and `gpg` packages, therefore the script will throw an error. Here is the command to fix that:
 ```bash
 sudo apt install -y curl gpg
 ```
 
-## Configuring the Server to External Traffic into my home Network
+
+## Configuring the Server to route External Traffic into my home Network
 
 The steps followed are documented on the dedicated page of the [ZeroTier Documentation](https://docs.zerotier.com/route-between-phys-and-virt/).
 
@@ -108,12 +113,16 @@ If everything is ok, the output should be similar to what is listed below:
 zt@ZeroTier:~$ sudo zerotier-cli listnetworks
 [sudo] password for zt: 
 200 listnetworks <nwid> <name> <mac> <status> <type> <dev> <ZT assigned ips>
-200 listnetworks NetworkID HomeLab MA:C_:AD:DR:ES:S_ OK PRIVATE ztppi6dy4n 192.168.196.1/24
+200 listnetworks NetworkID HomeLab MA:C_:AD:DR:ES:S_ OK PRIVATE ztdummyname 192.168.196.1/24
 ```
 
 ### Manage Routes to Home Network in the ZeroTier Dashboard
 
 In the `Advanced` tab look for the `Managed Routes` menu. Add to the `Destination` your Network subnet in CIDR Notation (for example `192.168.1.0/24`), and in the `Via` field write down the IP of your server. It should look something like this:
+
+![Routes](Routes.png)
+
+After that you can click on the "Submit" button to apply your rule.
 
 ### Enable IPv4 Forwarding in the Server
 

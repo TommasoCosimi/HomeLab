@@ -153,7 +153,7 @@ zt@ZeroTier:~$ ip addr
        valid_lft forever preferred_lft forever
 3: ztdummyname: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 2800 qdisc pfifo_fast state UNKNOWN group default qlen 1000
     link/ether 92:24:bf:82:f8:62 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.196.1/24 brd 192.168.196.255 scope global ztppi6dy4n
+    inet 192.168.196.1/24 brd 192.168.196.255 scope global ztdummyname
        valid_lft forever preferred_lft forever
     inet6 fe80::9024:bfff:fe82:f862/64 scope link 
        valid_lft forever preferred_lft forever

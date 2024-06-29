@@ -16,7 +16,7 @@ Just a new Network created [here](https://my.zerotier.com/network) with default 
 As anticipated it is an LXC Container with the following hardware allocated:
 * 1 CPU Core;
 * 512MB RAM + 512MB of Swap Space;
-* 2GB of Disk Space on a mechanical Hard Drive.
+* 4GB of Disk Space.
 
 The container runs on Debian 12 "Bookworm" (template downloaded from the Proxmox default list).
 

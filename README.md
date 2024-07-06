@@ -10,10 +10,4 @@ Configurations of the various Services.
 * 8GB DDR4 2133MHz
 * 512GB Nvme SSD
 * 1TB 7200RPM Mechanical HDD 
-* Proxmox VE
-
-### Dell OptiPlex GX620
-* Intel Pentium D 945
-* 4GB DDR2 555MHz
-* 500GB 7200RPM Mechanical HDD
-* Proxmox VE
+* Fedora Server

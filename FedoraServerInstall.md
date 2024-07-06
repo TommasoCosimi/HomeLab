@@ -1,1 +1,0 @@
-# Installation of Fedora Server

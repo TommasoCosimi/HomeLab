@@ -10,4 +10,4 @@ Configurations of the various Services.
 * 8GB DDR4 2133MHz
 * 512GB Nvme SSD
 * 1TB 7200RPM Mechanical HDD 
-* ProxmoxVE
+* Fedora 40 Server Edition

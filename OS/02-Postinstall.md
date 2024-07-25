@@ -44,13 +44,13 @@ $ sudo chown -R $(id -u $(whoami)):$(id -g $(whoami)) /your/mount/point
 
 ## Install QEMU
 
-As per the [Fedora Documentation](https://docs.fedoraproject.org/en-US/fedora-server/virtualization/installation/#_installing_libvirt_virtualization_software), it is possible to add Virtual Machines support through the use of QEMU and KVM and to add this functionality to Cockpit through the execution of this command:
+As per the [Fedora Documentation](https://docs.fedoraproject.org/en-US/fedora-server/virtualization/installation/#_installing_libvirt_virtualization_software), it is possible to add Virtual Machines support through the use of QEMU and KVM and to add this functionality to Cockpit.
 
 ```shell
 $ sudo dnf install qemu-kvm-core libvirt virt-install cockpit-machines guestfs-tools
 ```
 
-If you plan on virtualizing Windows machines, also install `libguestfs-tools`.
+If you plan on having Windows guest, also install `libguestfs-tools`.
 
 After that, enable the `libvirtd` service and socket:
 
@@ -89,7 +89,7 @@ sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/dock
 # Install Docker, Docker Compose and their plugins
 sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 # Enable the Docker Service
-sudo systemctl enable docker
+sudo systemctl enable --now docker
 # Add your user to the Docker Group
 sudo usermod -aG docker $(whoami)
 ```

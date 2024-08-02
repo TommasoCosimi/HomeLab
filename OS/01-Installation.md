@@ -1,9 +1,14 @@
 # Fedora 40 Installation
 
 The installation procedure is pretty standard and the only three deviations from a default installation have been:
+* User Creation;
 * Network Configuration;
 * Applications to install;
 * Disk Partitioning.
+
+## User Configuration
+
+Create a new Non-Root User and don't create a Root Account.
 
 ## Network Configuration
 
@@ -28,11 +33,27 @@ With the intention to set up automatic snapshots on the boot drive, the partitio
 | /dev/nvme0n1p1 | EFI        | /boot/efi      |
 | /dev/nvme0n1p2 | btrfs      | No Mountpoint  |
 
-Then, expanding on the `btrfs` partition, it has been split into two subvolumes: `@root` and `@home`.
+Then, expanding on the `btrfs` Volume, it has been split into multiple subvolumes: 
+* `@root` for the Root Filesystem;
+* `@home` for the Users' Home folders;
+* `@snapshots` to accomodate for the Root FS Snapshots (it will be manipulated later);
+* `@media` for external Drives
+* `@var` to preserve variable files such as logs, caches, but also Virtual Machines and Docker Containers;
+* `@opt` typically contains third-party program we'd want to preserve in case of rollback;
+* `@tmp` for temporary files, especially logs;
+* `@usrlocal` to preserve manually installed software.
+
+The Subvolume Layout was largely inspired by the [openSUSE guidelines](https://en.opensuse.org/SDB:BTRFS) and the [Arch guidelines](https://wiki.archlinux.org/title/Snapper#Suggested_filesystem_layout).
 
 | **BTRFS Subvolume** | **Format** | **Mountpoint** |
 |:-------------------:|:----------:|:--------------:|
 | @root               | btrfs      | /              |
 | @home               | btrfs      | /home          |
+| @snapshots          | btrfs      | /.snapshots    |
+| @media              | btrfs      | /media         |
+| @var                | btrfs      | /var           |
+| @opt                | btrfs      | /opt           |
+| @tmp                | btrfs      | /tmp           |
+| @usrlocal           | btrfs      | /usr/local     |
 
-After the installation is complete and the software is in place, more subvolumes will be created.
+It is now possible to proceed with the installation.

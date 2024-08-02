@@ -108,11 +108,11 @@ ID 264 gen 224 top level 259 path @var/lib/portables
 ID 290 gen 224 top level 259 path @var/lib/machines
 ```
 
-The bottom ones were created automatically by the Fedora Installer. It is plausible that the `/var/lib/machines` and the `/var/lib/machines` subvolume may not respect the CoW settings we applied earlier, so it is advisable to apply it manually again:
+The bottom ones were created automatically by the Fedora Installer. It is plausible that the `/var/lib/portables` and the `/var/lib/machines` subvolume may not respect the CoW settings we applied earlier, so it is advisable to apply it manually again:
 
 ```shell
-$ sudo chattr -R -f +C /var/lib/machines
 $ sudo chattr -R -f +C /var/lib/portables
+$ sudo chattr -R -f +C /var/lib/machines
 ```
 
 ### Install Snapper

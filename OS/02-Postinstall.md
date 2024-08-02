@@ -117,7 +117,7 @@ $ sudo chattr -R -f +C /var/lib/machines
 
 ### Install Snapper
 
-[Snapper](http://snapper.io), to cite from the [openSUSE's Snapper GitHub Repo](https://github.com/openSUSE/snapper), "is     a tool for Linux file system snapshot management. Apart from the obvious creation and deletion of snapshots it can compare snapshots and revert differences between them. In simple terms, this allows root and non-root users to view older versions of files and revert changes."
+[Snapper](http://snapper.io), to cite from the [openSUSE's Snapper GitHub Repo](https://github.com/openSUSE/snapper), "is     a tool for Linux file system snapshot management. Apart from the obvious creation and deletion of snapshots it can compare snapshots and revert differences between them. In simple terms, this allows root and non-root users to view older versions of files and revert changes.".
 
 To install Snapper, just use:
 
@@ -133,9 +133,9 @@ $ sudo dnf instal python-dnf-plugin-snapper
 
 ### Configure Root Level Snapshots with Snapper
 
-When creating a configuration for a subvolume, Snapper tends to create a nested subvolume for it, called `.snapshots` and mounted in `$SUBVOLUME_MOUNT_POINT/.snapshots`. For root snapshots we would like to use the "top-level" subvolume we created before: `@snapshots`.
+When creating a configuration for a subvolume, Snapper tends to create a nested subvolume for it called `.snapshots` and mounted in `$SUBVOLUME_MOUNT_POINT/.snapshots`. For root snapshots we would like to use the "top-level" subvolume we created before: `@snapshots`.
 
-To do this, without touching the `@snapshots` subvolume, unmount it and delete the `/.snapshots` folder since Snapper will create it and will not proceed if already present:
+To do this without touching the `@snapshots` subvolume, unmount it and delete the `/.snapshots` folder since Snapper will create it and will not proceed if already present:
 
 ```bash
 $ sudo umount /.snapshots
@@ -187,7 +187,7 @@ We now want to delete it in order to use out top-level subvolume:
 
 ```shell
 $ sudo btrfs subvolume delete /.snapshots
-$ sudo mkdir /.snapshots # Keep in mind that you have to recreate the mount point!
+$ sudo mkdir /.snapshots # Keep in mind that you have to recreate the mount point for @snapshots!
 ```
 
 This will restore your previous situation:
@@ -328,7 +328,7 @@ rm -rf ./grub-btrfs/
 
 #### Configure GRUB-BTRFS
 
-The above step should install the GRUB-BTRFS bootloader but will almost certainly result in an error. This is because different distributions position and GRUB differently. In order to fix it, edit the `/etc/default/grub-btrfs/config` file uncommenting the needed lines as follows:
+The above step should install the GRUB-BTRFS bootloader but will almost certainly result in an error. This is because different distributions position and name GRUB differently. In order to fix it, edit the `/etc/default/grub-btrfs/config` file uncommenting the needed lines as follows:
 
 ```bash
 [...]
@@ -392,7 +392,7 @@ It is advisable to now reboot the System.
 
 ## Server Performance Logging
 
-In the "Overview" tab there's a "Metrics and history" panel which tells you in real time the CPU and Memory usage of the server.
+In the "Overview" in Cockpit tab there's a "Metrics and history" panel which tells you in real time the CPU and Memory usage of the server.
 
 If you expand the panel, you will quickly find yourself into a more detailed interface, which however will probably tell you that `cockpit-pcp` is missing for Metrics History. It is possible to install it directly from the button right below.
 

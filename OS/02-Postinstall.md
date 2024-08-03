@@ -305,7 +305,7 @@ $ sudo systemctl enable --now snapper-cleanup.timer
 We need to install `git`, `gawk` and `inotify-tools` in order to proceed.
 
 ```shell
-$ sudo dnf install git gawk inotify-tools
+$ sudo dnf install git make gawk inotify-tools
 ```
 
 #### Install GRUB-BTRFS

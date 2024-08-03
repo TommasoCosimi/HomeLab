@@ -128,7 +128,7 @@ $ sudo dnf install snapper
 If you want Snapper to take snapshots whenever a package is modified through the `dnf` package manager, you can also install `python-dnf-plugin-snapper`.
 
 ```shell
-$ sudo dnf instal python-dnf-plugin-snapper
+$ sudo dnf install python-dnf-plugin-snapper
 ```
 
 ### Configure Root Level Snapshots with Snapper

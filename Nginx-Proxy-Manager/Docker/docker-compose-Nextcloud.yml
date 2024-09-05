@@ -11,6 +11,7 @@ services:
       services:
         ipv4_address: your.desired.address.here
       nextcloud-aio:
+        ipv4_address: your.desired.address.here
     volumes:
       - nginx-proxymanager_data:/data
       - nginx-proxymanager_letsencrypt:/etc/letsencrypt

@@ -1,6 +1,6 @@
-# Nginx Proxy Manager Installation
+# Vaultwarden
 
-Nginx Proxy Manager will be used as a Reverse Proxy and to have the hosted services domains with working SSL Certificates.
+Vaultwarden is a reimplementation of [Bitwarden](https://bitwarden.com/) written in Rust.
 
 ## The Container
 

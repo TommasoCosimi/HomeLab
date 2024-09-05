@@ -1,0 +1,25 @@
+services:
+  nextcloud-aio-mastercontainer:
+    image: nextcloud/all-in-one:latest
+    init: true
+    restart: unless-stopped
+    container_name: nextcloud-aio-mastercontainer
+    volumes:
+      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      services:
+        ipv4_address: your.ip.address.here
+    environment:
+      APACHE_PORT: 11000
+      APACHE_IP_BINDING: nginx.proxy.manager.address
+      NEXTCLOUD_DATADIR: /your/desired/directory/Nextcloud
+
+volumes:
+  nextcloud_aio_mastercontainer:
+    name: nextcloud_aio_mastercontainer
+
+networks:
+  services:
+    name: services
+    external: true

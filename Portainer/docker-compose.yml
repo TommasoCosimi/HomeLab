@@ -2,6 +2,7 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     restart: unless-stopped
+    container_name: portainer
     networks:
       services:
         ipv4_address: your.desired.address.here

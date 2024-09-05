@@ -70,8 +70,8 @@ This instance doesn't really need additional storage, but needs the `NET_ADMIN` 
 
 Joining a network is just a matter of running the command below:
 
-```bash
-sudo zerotier-cli join NETWORK_ID
+```shell
+$ sudo zerotier-cli join NETWORK_ID
 ```
 
 To which the expected output if everything goes well is `200 join OK`. Note that you have to replace the `NETWORK_ID` variable with the effective ID of your ZeroTier Network.
@@ -80,8 +80,8 @@ Before going any further you should authorize your Server on the Network using t
 
 To check that everything is working just run the following:
 
-```bash
-sudo zerotier-cli listnetworks
+```shell
+$ sudo zerotier-cli listnetworks
 ```
 
 If everything is ok, the output should be similar to what is listed below:

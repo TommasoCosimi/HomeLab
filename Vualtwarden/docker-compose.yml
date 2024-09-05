@@ -1,0 +1,24 @@
+services:
+  vaultwarden:
+    restart: unless-stopped
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    volumes:
+      - vaultwarden_data:/data/
+    networks:
+      services:
+        ipv4_address: your.ip.address.here
+    environment:
+      - DOMAIN=https://vaultwarden.your-domain.tld
+      - SIGNUPS_ALLOWED=false
+      - EMERGENCY_ACCESS_ALLOWED=true
+
+volumes:
+  vaultwarden_data:
+    name: vaultwarden_data
+    external: true
+
+networks:
+  services:
+    name: services
+    external: true

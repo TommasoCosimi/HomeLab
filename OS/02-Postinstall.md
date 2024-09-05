@@ -16,6 +16,128 @@ After that reboot the machine to apply the newly installed updates.
 
 Once the server has rebooted, locate the "Software updates" tab in Cockpit and enable automatic updates. Note that this will install the `dnf-automatic` package first, then ask you the type of updates and the time slot in which the server can install them and reboot the system.
 
+## Manage the `@root` Subvolume
+
+As mentioned in the Installation Procedure, it is advisable to create a new Subvolume to hold the home folder of the Root user.
+
+To do this, first mount your main partition into a recognizable path, in my case it will be `/mnt/btrfs`.
+
+To do this, simply create the folder:
+
+```shell
+$ sudo mkdir /mnt/btrfs
+```
+
+And then, after checking which partition is the BTRFS one you want to work (in my case `/dev/nvme0n1p2`), mount it into the previously created folder:
+
+```shell
+$ sudo mount /dev/nvme0n1p2 /mnt/btrfs
+```
+
+If you list the contents, you should see the various subvolumes:
+
+```shell
+$ ls /mnt/btrfs
+@  @home  @media  @opt  @snapshots  @swap  @tmp  @usrlocal  @var
+```
+
+Now create the new Subvolume inside the `/mnt/btrfs` mountpoint:
+
+```shell
+$ cd /mnt/btrfs
+$ sudo btrfs subvolume create @root
+```
+
+And add this new mountpoint into the `/etc/fstab` file:
+
+```bash
+$ cat /etc/fstab 
+# /etc/fstab
+# Created by anaconda on Thu Aug  1 21:14:30 2024
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+# Structure
+# <UUID>        <Mountpoint>    <fs>    <Mount Options>                         <dump>  <fsck>
+# ESP
+UUID=redacted   /boot/efi       vfat    umask=0077,shortname=winnt              0       2
+# Boot Drive
+UUID=redacted   /               btrfs   subvol=@,compress=zstd:1                0       0
+UUID=redacted   /.snapshots     btrfs   subvol=@snapshots,compress=zstd:1       0       0
+UUID=redacted   /home           btrfs   subvol=@home,compress=zstd:1            0       0
+UUID=redacted   /media          btrfs   subvol=@media,compress=zstd:1           0       0
+UUID=redacted   /opt            btrfs   subvol=@opt,compress=zstd:1             0       0
+UUID=redacted   /root           btrfs   subvol=@root,compress=zstd:1            0       0
+UUID=redacted   /swap           btrfs   subvol=@swap,compress=zstd:1            0       0
+UUID=redacted   /tmp            btrfs   subvol=@tmp,compress=zstd:1             0       0
+UUID=redacted   /usr/local      btrfs   subvol=@usrlocal,compress=zstd:1        0       0
+UUID=redacted   /var            btrfs   subvol=@var,compress=zstd:1             0       0
+# Internal HDD
+UUID=redacted   /media/HDD      ext4    defaults                                1       2
+```
+
+## Swapfiles (Optional)
+
+### Disable Copy-on-Write
+
+Having installed the system onto a CoW (Copy-on-Write) File System, to use swapfiles you need to disable CoW in the `/swap` folder before proceding:
+
+```shell
+$ sudo chattr -R -f +C /swap
+```
+
+### Create the Swapfile
+
+At this point it is just the standard procedure: I will be creating as an example a 32GB Swapfile called `swapfile0` inside the `/swap` folder:
+
+```shell
+$ sudo fallocate -l 32G /swap/swapfile0 # Create a 32GB empty file inside the desired location
+$ sudo chmod 600 /swap/swapfile0 # Adjust the permissions to the recommended
+$ sudo mkswap /swap/swapfile0 # Give the file the format of a Swap area
+$ sudo swapon /swap/swapfile0 # Test if the swapfile works (the command should not return anything onto the standard output)
+$ sudo swapoff /swap/swapfile0 # If everything works, turn it off for the moment
+```
+
+### Mount the Swapfile permanently
+
+Editing the `/etc/fstab` file again we can add an entry for the swapfile:
+
+```bash
+$ cat /etc/fstab 
+# /etc/fstab
+# Created by anaconda on Thu Aug  1 21:14:30 2024
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+# Structure
+# <UUID>        <Mountpoint>    <fs>    <Mount Options>                         <dump>  <fsck>
+# ESP
+UUID=redacted   /boot/efi       vfat    umask=0077,shortname=winnt              0       2
+# Boot Drive
+UUID=redacted   /               btrfs   subvol=@,compress=zstd:1                0       0
+UUID=redacted   /.snapshots     btrfs   subvol=@snapshots,compress=zstd:1       0       0
+UUID=redacted   /home           btrfs   subvol=@home,compress=zstd:1            0       0
+UUID=redacted   /media          btrfs   subvol=@media,compress=zstd:1           0       0
+UUID=redacted   /opt            btrfs   subvol=@opt,compress=zstd:1             0       0
+UUID=redacted   /root           btrfs   subvol=@root,compress=zstd:1            0       0
+UUID=redacted   /swap           btrfs   subvol=@swap,compress=zstd:1            0       0
+UUID=redacted   /tmp            btrfs   subvol=@tmp,compress=zstd:1             0       0
+UUID=redacted   /usr/local      btrfs   subvol=@usrlocal,compress=zstd:1        0       0
+UUID=redacted   /var            btrfs   subvol=@var,compress=zstd:1             0       0
+# Internal HDD
+UUID=redacted   /media/HDD      ext4    defaults                                1       2
+# Swapfile
+/swap/swapfile0 none            swap    sw                                      0       0
+```
+
 ## Snapshots
 
 Since we installed the OS onto a BTRFS Filesystem, it is definitely nice to take advantage of its Snapshots capabilities. For this I will use a SUSE Technology: `snapper`.
@@ -102,22 +224,24 @@ ID 258 gen 250 top level 5 path @opt
 ID 259 gen 254 top level 5 path @var
 ID 260 gen 250 top level 5 path @snapshots
 ID 261 gen 53 top level 5 path @media
-ID 262 gen 224 top level 5 path @home
-ID 263 gen 253 top level 5 path @
-ID 264 gen 224 top level 259 path @var/lib/portables
+ID 262 gen 53 top level 5 path @swap
+ID 263 gen 224 top level 5 path @home
+ID 264 gen 253 top level 5 path @
+ID 265 gen 224 top level 259 path @var/lib/portables
 ID 290 gen 224 top level 259 path @var/lib/machines
+ID 266 gen 225 top level 5 path @root
 ```
 
-The bottom ones were created automatically by the Fedora Installer. It is plausible that the `/var/lib/portables` and the `/var/lib/machines` subvolumes may not respect the CoW settings we applied earlier, so it is advisable to apply it manually again:
+The bottom ones were created automatically by the Fedora Installer. It is plausible that the `/var/lib/machines` and the `/var/lib/portables` subvolume may not respect the CoW settings we applied earlier, so it is advisable to apply it manually again:
 
 ```shell
-$ sudo chattr -R -f +C /var/lib/portables
 $ sudo chattr -R -f +C /var/lib/machines
+$ sudo chattr -R -f +C /var/lib/portables
 ```
 
 ### Install Snapper
 
-[Snapper](http://snapper.io), to cite from the [openSUSE's Snapper GitHub Repo](https://github.com/openSUSE/snapper), "is     a tool for Linux file system snapshot management. Apart from the obvious creation and deletion of snapshots it can compare snapshots and revert differences between them. In simple terms, this allows root and non-root users to view older versions of files and revert changes.".
+[Snapper](http://snapper.io), to cite from the [openSUSE's Snapper GitHub Repo](https://github.com/openSUSE/snapper), "is a tool for Linux file system snapshot management. Apart from the obvious creation and deletion of snapshots it can compare snapshots and revert differences between them. In simple terms, this allows root and non-root users to view older versions of files and revert changes.".
 
 To install Snapper, just use:
 
@@ -133,7 +257,7 @@ $ sudo dnf install python-dnf-plugin-snapper
 
 ### Configure Root Level Snapshots with Snapper
 
-When creating a configuration for a subvolume, Snapper tends to create a nested subvolume for it called `.snapshots` and mounted in `$SUBVOLUME_MOUNT_POINT/.snapshots`. For root snapshots we would like to use the "top-level" subvolume we created before: `@snapshots`.
+When creating a configuration for a subvolume, Snapper tends to create a nested subvolume for it, called `.snapshots` and mounted in `$SUBVOLUME_MOUNT_POINT/.snapshots`. For root snapshots we would like to use the "top-level" subvolume we created before: `@snapshots`.
 
 To do this without touching the `@snapshots` subvolume, unmount it and delete the `/.snapshots` folder since Snapper will create it and will not proceed if already present:
 
@@ -153,10 +277,12 @@ ID 258 gen 250 top level 5 path @opt
 ID 259 gen 254 top level 5 path @var
 ID 260 gen 250 top level 5 path @snapshots
 ID 261 gen 53 top level 5 path @media
-ID 262 gen 224 top level 5 path @home
-ID 263 gen 253 top level 5 path @
-ID 264 gen 224 top level 259 path @var/lib/portables
+ID 262 gen 53 top level 5 path @swap
+ID 263 gen 224 top level 5 path @home
+ID 264 gen 253 top level 5 path @
+ID 265 gen 224 top level 259 path @var/lib/portables
 ID 290 gen 224 top level 259 path @var/lib/machines
+ID 266 gen 225 top level 5 path @root
 ```
 
 Now proceed to create the Snapper configuration for the Root FS:
@@ -176,10 +302,12 @@ ID 258 gen 250 top level 5 path @opt
 ID 259 gen 254 top level 5 path @var
 ID 260 gen 250 top level 5 path @snapshots
 ID 261 gen 53 top level 5 path @media
-ID 262 gen 224 top level 5 path @home
-ID 263 gen 253 top level 5 path @
-ID 264 gen 224 top level 259 path @var/lib/portables
+ID 262 gen 53 top level 5 path @swap
+ID 263 gen 224 top level 5 path @home
+ID 264 gen 253 top level 5 path @
+ID 265 gen 224 top level 259 path @var/lib/portables
 ID 290 gen 224 top level 259 path @var/lib/machines
+ID 266 gen 225 top level 5 path @root
 ID 291 gen 100 top level 263 path /.snapshots
 ```
 
@@ -201,10 +329,12 @@ ID 258 gen 250 top level 5 path @opt
 ID 259 gen 254 top level 5 path @var
 ID 260 gen 250 top level 5 path @snapshots
 ID 261 gen 53 top level 5 path @media
-ID 262 gen 224 top level 5 path @home
-ID 263 gen 253 top level 5 path @
-ID 264 gen 224 top level 259 path @var/lib/portables
+ID 262 gen 53 top level 5 path @swap
+ID 263 gen 224 top level 5 path @home
+ID 264 gen 253 top level 5 path @
+ID 265 gen 224 top level 259 path @var/lib/portables
 ID 290 gen 224 top level 259 path @var/lib/machines
+ID 266 gen 225 top level 5 path @root
 ```
 
 Now re-mount everything according to your `/etc/fstab`:
@@ -239,11 +369,15 @@ UUID=redacted   /.snapshots     btrfs   subvol=@snapshots,compress=zstd:1       
 UUID=redacted   /home           btrfs   subvol=@home,compress=zstd:1            0       0
 UUID=redacted   /media          btrfs   subvol=@media,compress=zstd:1           0       0
 UUID=redacted   /opt            btrfs   subvol=@opt,compress=zstd:1             0       0
+UUID=redacted   /root           btrfs   subvol=@root,compress=zstd:1            0       0
+UUID=redacted   /swap           btrfs   subvol=@swap,compress=zstd:1            0       0
 UUID=redacted   /tmp            btrfs   subvol=@tmp,compress=zstd:1             0       0
 UUID=redacted   /usr/local      btrfs   subvol=@usrlocal,compress=zstd:1        0       0
 UUID=redacted   /var            btrfs   subvol=@var,compress=zstd:1             0       0
 # Internal HDD
 UUID=redacted   /media/HDD      ext4    defaults                                1       2
+# Swapfile
+/swap/swapfile0 none            swap    sw                                      0       0
 ```
 
 Note that I adjusted the formatting for better readability and redacted some information (also for better readability).
@@ -305,7 +439,7 @@ $ sudo systemctl enable --now snapper-cleanup.timer
 We need to install `git`, `gawk` and `inotify-tools` in order to proceed.
 
 ```shell
-$ sudo dnf install git make gawk inotify-tools
+$ sudo dnf install git gawk inotify-tools
 ```
 
 #### Install GRUB-BTRFS
@@ -392,7 +526,7 @@ It is advisable to now reboot the System.
 
 ## Server Performance Logging
 
-In the "Overview" in Cockpit tab there's a "Metrics and history" panel which tells you in real time the CPU and Memory usage of the server.
+In the "Overview" tab in Cockpit there's a "Metrics and history" panel which tells you in real time the CPU and Memory usage of the server.
 
 If you expand the panel, you will quickly find yourself into a more detailed interface, which however will probably tell you that `cockpit-pcp` is missing for Metrics History. It is possible to install it directly from the button right below.
 

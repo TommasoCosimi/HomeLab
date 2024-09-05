@@ -1,0 +1,21 @@
+services:
+  kasm:
+    image: lscr.io/linuxserver/kasm:latest
+    restart: unless-stopped
+    container_name: kasm-workspaces
+    privileged: true
+    networks:
+      services:
+        ipv4_address: your.desired.ip.address
+    environment:
+      - KASM_PORT=8443
+    volumes:
+      - /opt/Kasm-Workspaces/data:/opt
+      - /opt/Kasm-Workspaces/profiles:/profiles
+      - /dev/input:/dev/input
+      - /run/udev/data:/run/udev/data
+
+networks:
+  services:
+    name: services
+    external: true

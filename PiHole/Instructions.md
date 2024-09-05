@@ -2,7 +2,7 @@
 
 [PiHole](https://pi-hole.net/) is a local recursive DNS (but also a DHCP Server!) with Ad Blocking capabilities.
 
-In this example I am going to use PiHole in conjuntion with `Cloudflared` to have a local recursive DNS Server which will serve my DNS requests using the DoH (DNS-over-HTTPS) Protocol.
+In this example I am going to use PiHole in conjunction with `Cloudflared` to have a local recursive DNS Server which will serve my DNS requests using the DoH (DNS-over-HTTPS) Protocol.
 
 ## The Container
 

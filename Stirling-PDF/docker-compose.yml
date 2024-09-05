@@ -1,0 +1,36 @@
+services:
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    restart: unless-stopped
+    container_name: stirling-pdf
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=true
+      - LANGS=it_IT
+    networks:
+      services:
+        ipv4_address: your.desired.ip.address
+    volumes:
+      - stirlingpdf_trainingData:/usr/share/tessdata
+      - stirlingpdf_extraConfigs:/configs
+      - stirlingpdf_customFiles:/customFiles/
+      - stirlingpdf_logs:/logs/
+
+volumes:
+  stirlingpdf_trainingData:
+    name: stirlingpdf_trainingData
+    external: true
+  stirlingpdf_extraConfigs:
+    name: stirlingpdf_extraConfigs
+    external: true
+  stirlingpdf_customFiles:
+    name: stirlingpdf_customFiles
+    external: true
+  stirlingpdf_logs:
+    name: stirlingpdf_logs
+    external: true
+  
+networks:
+  services:
+    name: services
+    external: true

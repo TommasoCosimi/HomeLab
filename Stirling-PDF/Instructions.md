@@ -1,6 +1,6 @@
 # Stirling PDF
 
-Stirling PDF is a suite of tools to manage PDFs
+Stirling PDF is a suite of tools to manage PDFs.
 
 ## The Container
 

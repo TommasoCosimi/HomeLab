@@ -33,7 +33,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # 4. Install ZeroTier
 RUN echo "net.ipv4.ip_forward=1" > /etc/sysctl.conf && \
     apt update && apt full-upgrade -y && \
-    apt install -y curl gnupg iproute2 && \
+    apt install -y curl gnupg iproute2 iptables iptables-persistent && \
     curl -s https://install.zerotier.com | bash
 
 # Ensure the ZeroTier service starts automatically
@@ -100,3 +100,18 @@ In the `Advanced` tab look for the `Managed Routes` menu. Add to the `Destinatio
 ![Routes](Routes.png)
 
 After that you can click on the "Submit" button to apply your rule.
+
+
+## Enable routing IPs
+
+```shell
+#!/bin/bash
+
+ZT_IFACE="$(ls /sys/class/net | grep zt)"
+PHY_IFACE=br0
+
+iptables -t nat -A POSTROUTING -o $PHY_IFACE -j MASQUERADE
+iptables -A FORWARD -i $PHY_IFACE -o $ZT_IFACE -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i $ZT_IFACE -o $PHY_IFACE -j ACCEPT
+bash -c iptables-save > /etc/iptables/rules.v4
+```

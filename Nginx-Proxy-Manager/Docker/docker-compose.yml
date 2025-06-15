@@ -4,22 +4,22 @@ services:
     restart: unless-stopped
     container_name: nginx-proxymanager
     ports:
-      - 80:80
-      - 443:443
-      - 81:81
+      - '80:80'
+      - '443:443'
+      - '81:81'
     networks:
       services:
         ipv4_address: your.desired.address.here
     volumes:
-      - nginx-proxymanager_data:/data
-      - nginx-proxymanager_letsencrypt:/etc/letsencrypt
+      - nginx_proxymanager-data:/data
+      - nginx_proxymanager-letsencrypt:/etc/letsencrypt
 
 volumes:
-  nginx-proxymanager_data:
-    name: nginx-proxymanager_data
+  nginx_proxymanager-data:
+    name: nginx_proxymanager-data
     external: true
-  nginx-proxymanager_letsencrypt:
-    name: nginx-proxymanager_letsencrypt
+  nginx_proxymanager-letsencrypt:
+    name: nginx_proxymanager-letsencrypt
     external: true
 
 networks:

@@ -16,4 +16,4 @@ RUN echo "net.ipv4.ip_forward=1" > /etc/sysctl.conf && \
     curl -s https://install.zerotier.com | bash
 
 # Ensure the ZeroTier service starts automatically
-CMD service zerotier-one start && tail -f /dev/null
+CMD ["/bin/bash", "-c", "service zerotier-one start; tail -f /dev/null"]

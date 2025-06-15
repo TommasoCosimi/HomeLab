@@ -10,29 +10,23 @@ services:
       TUNNEL_DNS_ADDRESS: '0.0.0.0'
     networks:
       internal:
-        ipv4_address: cloudflared.internal.ip.address
+        ipv4_address: your.desired.address.here
   pihole:
     image: pihole/pihole
     restart: unless-stopped
     container_name: pihole_webui
-    environment:
-      TZ: 'Europe/Rome'
-      WEBPASSWORD: ':CHANGEME!'
-      DNS1: 'cloudflared.internal.ip.address#5053'
-      DNS2: 'no'
-      DNSSEC: 'true'
-      QUERY_LOGGING: 'false'
-      DNSMASQ_LISTENING: 'all'
+    env_file:
+      - .env
     volumes:
       - pihole_config:/etc/pihole/
       - pihole_dnsmasq:/etc/dnsmasq.d/
     networks:
       internal:
-        ipv4_address: your.desired.ip.address
+        ipv4_address: your.desired.address.here
       home:
-        ipv4_address: your.desired.ip.address
+        ipv4_address: your.desired.address.here
       services:
-        ipv4_address: your.desired.ip.address
+        ipv4_address: your.desired.address.here
     depends_on:
       - cloudflared
 
@@ -48,7 +42,7 @@ networks:
   internal:
     ipam:
       config:
-        - subnet: your.desired.address.space/cidr
+        - subnet: your.desired.address.here/29
   home:
     name: home
     external: true

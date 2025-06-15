@@ -9,15 +9,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       services:
-        ipv4_address: your.ip.address.here
+        ipv4_address: desired.ip.address.here
     environment:
+      APACHE_ADDITIONAL_NETWORK: services
       APACHE_PORT: 11000
-      APACHE_IP_BINDING: nginx.proxy.manager.address
-      NEXTCLOUD_DATADIR: /your/desired/directory/Nextcloud
+      APACHE_IP_BINDING: 0.0.0.0
+      NEXTCLOUD_DATADIR: /path/where/to/store/files
 
 volumes:
   nextcloud_aio_mastercontainer:
     name: nextcloud_aio_mastercontainer
+    external: true
 
 networks:
   services:

@@ -1,0 +1,16 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      services:
+    volumes:
+      - ./vw-data/:/data/
+
+networks:
+  services:
+    name: services
+    external: true

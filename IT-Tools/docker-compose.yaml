@@ -1,0 +1,12 @@
+services:
+  it-tools:
+    container_name: it-tools
+    image: corentinth/it-tools:latest
+    restart: unless-stopped
+    networks:
+      services:
+
+networks:
+  services:
+    name: services
+    external: true

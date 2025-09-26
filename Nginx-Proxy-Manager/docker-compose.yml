@@ -1,0 +1,23 @@
+services:
+  npm:
+    container_name: nginx-proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      services:
+        ipv4_address: your.desired.address.here
+      external:
+        ipv4_address: your.desired.address.here
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+networks:
+  services:
+    name: services
+    external: true
+  external:
+    name: external
+    external: true

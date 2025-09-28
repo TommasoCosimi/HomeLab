@@ -1,0 +1,55 @@
+services:
+  app:
+    container_name: nextcloud_app
+    image: nextcloud
+    restart: always
+    env_file:
+      - common.env
+      - nc.env
+    networks:
+      nextcloud_internal_net:
+      services:
+    volumes:
+      - ./nc_data/:/var/www/html/
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    container_name: nextcloud_redis
+    image: redis:alpine
+    restart: always
+    networks:
+      nextcloud_internal_net:
+
+  db:
+    container_name: nextcloud_db
+    image: postgres:17-alpine3.22 # Recommended for optimal performance
+    restart: always
+    env_file:
+      - common.env
+    networks:
+      nextcloud_internal_net:
+    volumes:
+      - ./db_data/:/var/lib/postgresql/data/
+      
+  cron:
+    container_name: nextcloud_cron
+    image: nextcloud:apache
+    restart: always
+    networks:
+      nextcloud_internal_net:
+    volumes:
+      - ./nc_data/:/var/www/html/
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - redis
+
+networks:
+  nextcloud_internal_net:
+    name: nextcloud_internal_net
+    internal: true
+  services:
+    name: services
+    external: true

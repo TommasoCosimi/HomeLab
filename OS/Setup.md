@@ -470,7 +470,7 @@ firewall-cmd --reload
 ### Install Docker
 Directly from the [Docker documentation](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script):
 ```bash
-apt install -y curl
+apt -y install curl
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 ```
@@ -515,5 +515,5 @@ sudo docker network create \
     -o parent=yourInterfaceName \
     --subnet your.external.network.subnet/mask \
     --gateway your.external.network.gatway \
-    external
+    incusnet
 ```

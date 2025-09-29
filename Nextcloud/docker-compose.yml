@@ -21,6 +21,8 @@ services:
     restart: always
     networks:
       nextcloud_internal_net:
+    volumes:
+      - ./redis_data/:/data/
 
   db:
     container_name: nextcloud_db

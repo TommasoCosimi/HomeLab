@@ -199,7 +199,7 @@ sudo systemctl enable --now pmlogger
 ```
 
 
-# Hosting Microservices
+# Hosting Services
 The idea behind this setup is to use [Incus](https://linuxcontainers.org/incus/docs/main/) to spin up containers which can either host applications or another containerization tool such as [Docker](https://www.docker.com/) which then manages its containers in a nested environment.
 
 ## Installing Incus

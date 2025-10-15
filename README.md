@@ -1,5 +1,5 @@
 # HomeLab
-Collection of configurations of my various Self-Hosted Microservices.
+Collection of configurations of my various Self-Hosted Services.
 
 ## Devices
 ### HP 290-G1

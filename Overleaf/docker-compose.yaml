@@ -1,0 +1,57 @@
+services:
+  app:
+    container_name: overleaf_sharelatex
+    image: sharelatex/sharelatex
+    restart: always
+    stop_grace_period: 60s
+    env_file:
+      - sharelatex.env
+    networks:
+      overleaf_internal_net:
+      services:
+    volumes:
+      - ./sharelatex_data:/var/lib/overleaf
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  mongo:
+    container_name: overleaf_mongo
+    image: mongo:6.0
+    restart: always
+    command: '--replSet overleaf'
+    healthcheck:
+      test: echo 'db.stats().ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    env_file:
+      - mongo.env
+    networks:
+      overleaf_internal_net:
+    extra_hosts:
+      # Required when using the automatic database setup for initializing the replica set.
+      # This override is not needed when running the setup after starting up mongo.
+      - overleaf_mongo:127.0.0.1
+    volumes:
+      - ./mongo_data:/data/db
+      - ./bin/shared/mongodb-init-replica-set.js:/docker-entrypoint-initdb.d/mongodb-init-replica-set.js
+      
+  redis:
+    container_name: overleaf_redis
+    image: redis:6.2
+    restart: always
+    networks:
+      overleaf_internal_net:
+    volumes:
+      - ./redis_data:/data
+
+networks:
+  overleaf_internal_net:
+    name: overleaf_internal_net
+    internal: true
+  services:
+    name: services
+    external: true

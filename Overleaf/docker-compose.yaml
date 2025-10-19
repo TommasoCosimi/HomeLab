@@ -1,7 +1,9 @@
 services:
   app:
     container_name: overleaf_sharelatex
-    image: sharelatex/sharelatex
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     stop_grace_period: 60s
     env_file:
@@ -32,8 +34,6 @@ services:
     networks:
       overleaf_internal_net:
     extra_hosts:
-      # Required when using the automatic database setup for initializing the replica set.
-      # This override is not needed when running the setup after starting up mongo.
       - overleaf_mongo:127.0.0.1
     volumes:
       - ./mongo_data:/data/db

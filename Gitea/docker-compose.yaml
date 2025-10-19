@@ -1,0 +1,35 @@
+services:
+  server:
+    container_name: gitea_server
+    image: docker.gitea.com/gitea:latest
+    restart: always
+    env_file:
+      - server.env
+    networks:
+      gitea_internal_net:
+      services:
+    volumes:
+      - ./data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
+
+  db:
+    container_name: gitea_db
+    image: docker.io/library/postgres:14
+    restart: always
+    env_file:
+      - db.env
+    networks:
+      gitea_internal_net:
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+networks:
+  gitea_internal_net:
+    name: gitea_internal_net
+    internal: true
+  services:
+    name: services
+    external: true

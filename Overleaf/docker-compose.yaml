@@ -37,6 +37,7 @@ services:
       - overleaf_mongo:127.0.0.1
     volumes:
       - ./mongo_data:/data/db
+      - ./mongo_configdb:/data/configdb
       - ./bin/shared/mongodb-init-replica-set.js:/docker-entrypoint-initdb.d/mongodb-init-replica-set.js
       
   redis:

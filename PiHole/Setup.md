@@ -80,6 +80,14 @@ Remove every unneded service from the zone, minimizing the open ports.
 firewall-cmd --zone=public --remove-service=ssh --remove-service=dhcpv6-client --permanent
 firewall-cmd --zone=public --add-service=http --add-service=dns --permanent
 ```
+Add accepted sources of packets.
+```bash
+firewall-cmd --zone=public --add-source=a.b.c.d/e --permanent # For your subnet
+```
+Set the policy to drop:
+```bash
+firewall-cmd --set-target=DROP --zone=public --permanent
+```
 Finally, reload the firewall:
 ```bash
 firewall-cmd --reload

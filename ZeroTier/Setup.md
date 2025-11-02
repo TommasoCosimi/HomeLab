@@ -68,34 +68,8 @@ Gateway=your.default.gateway.address
 DNS=your.default.dns.address
 ```
 
-### Install and configure a Firewall for the container
-FirewallD will be again the firewall of choice:
-```bash
-apt -y install firewalld
-systemctl enable --now firewalld
-```
-Add the interface to the "public" zone:
-```bash
-firewall-cmd --add-interface=eth0 --zone=public --permanent
-```
-Remove every unneded service from the zone, minimizing the open ports.
-```bash
-firewall-cmd --zone=public --remove-service=ssh --remove-service=dhcpv6-client --permanent
-```
-Finally, reload the firewall:
-```bash
-firewall-cmd --reload
-```
-
-### Install ZeroTier
-It is possible to install ZeroTier using its convenience script:
-```bash
-apt -y install curl
-curl -s https://install.zerotier.com | bash
-```
-
-### Setup ZeroTier and Enable Forwarding
-Use the `Enable_Forwarding.sh` script available in this repository. Its creation has been inspired by the [ZeroTier documentation](https://docs.zerotier.com/route-between-phys-and-virt/).
+### Setup ZeroTier and Enable Forwarding with IPTables
+Use the `Setup.sh` script available in this repository. Its creation has been inspired by the [ZeroTier documentation](https://docs.zerotier.com/route-between-phys-and-virt/).
 
 ## Manage Routes to Home Network in the ZeroTier Dashboard
 In the `Advanced` tab look for the `Managed Routes` menu. Add to the `Destination` your Network subnet in CIDR Notation (for example `192.168.1.0/24`), and in the `Via` field write down the IP of your server. It should look something like this:
